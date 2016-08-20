@@ -20,9 +20,6 @@
 //*********************************************************************************************
 #define NODEID        1    //unique for each node on same network
 #define NETWORKID     100  //the same on all nodes that talk to each other
-//Match frequency to the hardware version of the radio on your Moteino (uncomment one):
-//#define FREQUENCY     RF69_433MHZ
-//#define FREQUENCY     RF69_868MHZ
 #define FREQUENCY     RF69_915MHZ
 #define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HW    //uncomment only for RFM69HW! Leave out if you have RFM69W!
@@ -46,13 +43,8 @@ Adafruit_Soundboard sfx = Adafruit_Soundboard(&ss, NULL, SFX_RST);
 
 #define SERIAL_BAUD   115200
 
-#ifdef __AVR_ATmega1284P__
-  #define LED           15 // Moteino MEGAs have LEDs on D15
-  #define FLASH_SS      23 // and FLASH SS on D23
-#else
-  #define LED           9 // Moteinos have LEDs on D9
-  #define FLASH_SS      8 // and FLASH SS on D8
-#endif
+#define LED           9 // Moteinos have LEDs on D9
+#define FLASH_SS      8 // and FLASH SS on D8
 
 #ifdef ENABLE_ATC
   RFM69_ATC radio;
@@ -133,6 +125,21 @@ void loop() {
         changeColor(strData);
         break;
       case '$':
+//        processColor(charData);
+//        splitString(charData, ',');
+  const char d[2] = ",";
+  char * token;
+
+  token = strtok(charData, d);
+
+  while (token != NULL) {
+    //process token
+    Serial.println(token);
+
+    //get the next token
+    token = strtok(NULL, d);
+  }
+
         for (byte j = 1; j < strData.length(); j++) {
           Serial.println("processing char " + (String)j + ": " + charData[j]);
           changeColor(charData[j]);
@@ -183,6 +190,36 @@ void loop() {
     Serial.println();
     Blink(LED,3);
   }
+}
+
+//------------------------------------------------------------------
+String splitString(String input, char chr) {
+  char chrarray[25];
+  const char d[2] = ",";
+  char * token;
+
+  input.toCharArray(chrarray, 25);
+  token = strtok(chrarray, d);
+
+  while (token != NULL) {
+    //process token
+    Serial.println(token);
+    token = strtok(NULL, d);
+  }
+//  for (int i = 0; i < input.length(); i++) {
+//    if (input.substring(i, i+1) == ",") {
+//      firstVal = input.substring(0, i).toInt();
+//      secondVal = input.substring(i+1).toInt();
+//      break;
+//    }
+//  }
+}
+
+//------------------------------------------------------------------
+void processColor(String strColors) {
+  //String strClrCmds[30];
+
+//  strClrCmds = strColors.split
 }
 
 //------------------------------------------------------------------
